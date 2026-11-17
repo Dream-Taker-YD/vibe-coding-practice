@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>반짝반짝 나의 메모장</title>
+<style>
+:root{--ink:#29324a;--muted:#7b849b;--paper:#fff;--bg:#f4f7ff;--line:#e8ecf6;--accent:#6c7cff;--shadow:0 12px 35px #394b7a12}
+*{box-sizing:border-box}body{margin:0;background:linear-gradient(135deg,#f3f6ff,#fff8f0);color:var(--ink);font-family:"Pretendard","Noto Sans KR",system-ui,sans-serif;min-height:100vh}
+button,input,textarea{font:inherit}button{cursor:pointer}
+.top{max-width:1120px;margin:auto;padding:30px 24px 18px;display:flex;align-items:center;justify-content:space-between;gap:16px}
+.brand{display:flex;align-items:center;gap:13px}.logo{width:54px;height:54px;border-radius:18px;background:#fff;display:grid;place-items:center;font-size:29px;box-shadow:var(--shadow)}
+h1{font-size:clamp(23px,4vw,31px);margin:0 0 4px;letter-spacing:-1px}.sub{color:var(--muted);font-size:14px}
+.top-actions{display:flex;gap:9px;align-items:center}.pill{border:0;border-radius:14px;padding:12px 16px;background:#fff;color:var(--ink);box-shadow:var(--shadow);font-weight:700}.pill.primary{background:var(--accent);color:white}
+.wrap{max-width:1120px;margin:auto;padding:10px 24px 50px;display:grid;grid-template-columns:310px 1fr;gap:22px}
+.panel{background:#ffffffd9;border:1px solid #fff;border-radius:24px;box-shadow:var(--shadow);padding:20px}
+.side-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:15px}.side-head h2{font-size:17px;margin:0}.count{font-size:12px;color:var(--muted);background:#f0f2ff;padding:6px 10px;border-radius:20px}
+.search{width:100%;border:1px solid var(--line);background:#f9faff;border-radius:13px;padding:12px 13px;outline:none;margin-bottom:13px}.search:focus,.title:focus,.body:focus{border-color:#aab3ff;box-shadow:0 0 0 3px #6c7cff18}
+.notes{display:flex;flex-direction:column;gap:9px;max-height:570px;overflow:auto;padding-right:3px}
+.note-item{border:1px solid transparent;background:#f8f9ff;border-radius:15px;padding:13px;text-align:left;color:inherit;transition:.15s}.note-item:hover{transform:translateY(-1px);border-color:#dce1ff}.note-item.active{background:#eef0ff;border-color:#cdd3ff}
+.note-top{display:flex;justify-content:space-between;gap:8px;align-items:center}.note-name{font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.note-date{font-size:11px;color:var(--muted);white-space:nowrap}.preview{font-size:12px;color:var(--muted);margin-top:7px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.empty-list{text-align:center;color:var(--muted);padding:28px 8px;font-size:14px;line-height:1.7}
+.editor{min-height:600px;display:flex;flex-direction:column}.editor-head{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:18px}.save-state{font-size:12px;color:#48a581}.editor-buttons{display:flex;gap:8px}.small-btn{border:1px solid var(--line);background:white;border-radius:12px;padding:9px 12px;color:var(--muted);font-size:13px;font-weight:700}.small-btn.danger{color:#e16b76}
+.title{width:100%;font-size:27px;font-weight:850;letter-spacing:-.8px;border:1px solid transparent;border-radius:12px;padding:10px 8px;color:var(--ink);outline:none;background:transparent}.meta{padding:0 9px 15px;color:var(--muted);font-size:12px}
+.colors{display:flex;align-items:center;gap:9px;padding:0 9px 17px}.color-label{font-size:12px;color:var(--muted);margin-right:2px}.dot{width:22px;height:22px;border-radius:50%;border:2px solid #fff;box-shadow:0 0 0 1px #dce1ed}.dot.selected{box-shadow:0 0 0 2px var(--ink)}
+.body{resize:vertical;flex:1;min-height:330px;width:100%;border:1px solid transparent;border-radius:14px;padding:15px 12px;outline:none;background:linear-gradient(#fff,#fff) padding-box, repeating-linear-gradient(white 0 31px,#edf0f8 32px 33px) border-box;line-height:33px;font-size:16px;color:#414b63}
+.hint{margin:13px 8px 0;color:#a0a7b8;font-size:12px}
+.blank{flex:1;display:grid;place-items:center;text-align:center;color:var(--muted);line-height:1.8}.blank .big{font-size:64px;margin-bottom:8px}
+footer{text-align:center;color:#a0a7b8;font-size:12px;padding:0 20px 24px}
+@media(max-width:760px){.top{padding:22px 16px 12px;align-items:flex-start}.wrap{padding:8px 16px 35px;grid-template-columns:1fr}.panel{padding:16px}.notes{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));max-height:230px}.editor{min-height:560px}.top-actions .pill{padding:10px 12px;font-size:13px}}
+@media(max-width:430px){.notes{grid-template-columns:1fr 1fr}.logo{width:46px;height:46px}.sub{font-size:12px}.top-actions{flex-direction:column;align-items:stretch}}
+</style>
+</head>
+<body>
+<header class="top">
+ <div class="brand"><div class="logo">📝</div><div><h1>반짝반짝 나의 메모장</h1><div class="sub">생각과 이야기를 자유롭게 적어 보세요!</div></div></div>
+ <div class="top-actions"><button class="pill" id="download">📥 백업하기</button><button class="pill primary" id="newTop">＋ 새 메모</button></div>
+</header>
+<main class="wrap">
+ <aside class="panel">
+  <div class="side-head"><h2>📚 내 메모 모음</h2><span class="count" id="count">0개</span></div>
+  <input class="search" id="search" placeholder="🔎 메모 찾기" aria-label="메모 찾기">
+  <div class="notes" id="notes"></div>
+ </aside>
+ <section class="panel editor" id="editor">
+  <div class="editor-head"><span class="save-state" id="saveState">✨ 자동 저장돼요</span><div class="editor-buttons"><button class="small-btn" id="copy">복사</button><button class="small-btn danger" id="delete">삭제</button></div></div>
+  <input class="title" id="title" maxlength="60" placeholder="메모 제목을 써 보세요 ✏️" aria-label="메모 제목">
+  <div class="meta" id="meta">새 메모</div>
+  <div class="colors" aria-label="메모 색깔 선택"><span class="color-label">메모 색깔</span>
+   <button class="dot selected" data-color="#fff7d6" style="background:#fff7d6" aria-label="노랑"></button>
+   <button class="dot" data-color="#e8f7ec" style="background:#e8f7ec" aria-label="초록"></button>
+   <button class="dot" data-color="#eaf1ff" style="background:#eaf1ff" aria-label="파랑"></button>
+   <button class="dot" data-color="#f8eaff" style="background:#f8eaff" aria-label="보라"></button>
+   <button class="dot" data-color="#ffe9e9" style="background:#ffe9e9" aria-label="분홍"></button>
+  </div>
+  <textarea class="body" id="body" placeholder="오늘 있었던 일, 재미있는 생각, 잊지 말아야 할 일을 적어 보세요!
+
+예시) 오늘은 친구와 운동장에서 신나게 놀았다. ⚽" aria-label="메모 내용"></textarea>
+  <div class="hint">💡 작은 생각도 소중해요. 편하게 적어 보세요!</div>
+ </section>
+</main>
+<footer>🔒 메모는 이 기기의 브라우저에 저장돼요. 다른 사람과 공유되지 않아요.</footer>
+<script>
+const KEY='sparkly-kids-notes-v1';
+const $=id=>document.getElementById(id);
+let notes=[], current=null, timer=null, color='#fff7d6';
+try{notes=JSON.parse(localStorage.getItem(KEY)||'[]')}catch(e){notes=[]}
+const stamp=()=>new Date().toLocaleString('ko-KR',{month:'long',day:'numeric',hour:'2-digit',minute:'2-digit'});
+function persist(){localStorage.setItem(KEY,JSON.stringify(notes));$('saveState').textContent='✓ 저장했어요';}
+function active(){return notes.find(n=>n.id===current)}
+function schedule(){ $('saveState').textContent='저장하는 중…'; clearTimeout(timer); timer=setTimeout(save,250)}
+function save(){
+ let n=active(); if(!n)return;
+ n.title=$('title').value.trim()||'제목 없는 메모'; n.body=$('body').value; n.color=color; n.updated=Date.now();
+ persist(); renderList(); $('meta').textContent='마지막 수정: '+stampFrom(n.updated);
+}
+function stampFrom(t){return new Date(t).toLocaleString('ko-KR',{month:'long',day:'numeric',hour:'2-digit',minute:'2-digit'})}
+function renderList(){
+ const q=$('search').value.trim().toLowerCase(); const filtered=notes.filter(n=>(n.title+n.body).toLowerCase().includes(q)).sort((a,b)=>b.updated-a.updated);
+ $('count').textContent=notes.length+'개'; $('notes').innerHTML='';
+ if(!filtered.length){$('notes').innerHTML='<div class="empty-list">아직 메모가 없어요.<br>새 메모를 만들어 볼까요? 🌱</div>';return}
+ filtered.forEach(n=>{const b=document.createElement('button');b.className='note-item'+(n.id===current?' active':'');b.style.background=n.color;b.innerHTML='<div class="note-top"><span class="note-name"></span><span class="note-date"></span></div><div class="preview"></div>';b.querySelector('.note-name').textContent=n.title||'제목 없는 메모';b.querySelector('.note-date').textContent=stampFrom(n.updated);b.querySelector('.preview').textContent=n.body||'내용을 적어 보세요…';b.onclick=()=>select(n.id);$('notes').appendChild(b)})
+}
+function select(id){clearTimeout(timer);if(current)save();current=id;const n=active();$('title').value=n.title==='제목 없는 메모'?'':n.title;$('body').value=n.body;color=n.color||'#fff7d6';$('editor').style.background=n.color||'#fff';$('meta').textContent='마지막 수정: '+stampFrom(n.updated);$('saveState').textContent='✨ 자동 저장돼요';document.querySelectorAll('.dot').forEach(d=>d.classList.toggle('selected',d.dataset.color===color));renderList()}
+function fresh(){if(current)save();const n={id:Date.now().toString(36)+Math.random().toString(36).slice(2,6),title:'',body:'',color:'#fff7d6',updated:Date.now()};notes.push(n);current=n.id;persist();select(current);$('title').focus();renderList()}
+$('newTop').onclick=fresh;
+$('title').addEventListener('input',schedule);$('body').addEventListener('input',schedule);
+$('search').addEventListener('input',renderList);
+document.querySelectorAll('.dot').forEach(d=>d.onclick=()=>{color=d.dataset.color;$('editor').style.background=color;document.querySelectorAll('.dot').forEach(x=>x.classList.toggle('selected',x===d));schedule()});
+$('delete').onclick=()=>{if(!current)return;if(!confirm('이 메모를 삭제할까요?'))return;notes=notes.filter(n=>n.id!==current);current=null;persist();if(notes.length)select(notes.sort((a,b)=>b.updated-a.updated)[0].id);else{ $('title').value='';$('body').value='';$('meta').textContent='메모를 선택하거나 새로 만들어 보세요';$('editor').style.background='#fff';renderList()}};
+$('copy').onclick=async()=>{const text=($('title').value+'\n\n'+$('body').value).trim();if(!text)return;try{await navigator.clipboard.writeText(text);$('saveState').textContent='📋 복사했어요'}catch(e){$('body').select();document.execCommand('copy');$('saveState').textContent='📋 복사했어요'}};
+$('download').onclick=()=>{save();const blob=new Blob([JSON.stringify(notes,null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='나의-메모-백업.json';a.click();URL.revokeObjectURL(a.href)};
+if(notes.length)select(notes.sort((a,b)=>b.updated-a.updated)[0].id);else fresh();
+</script>
+</body></html>
